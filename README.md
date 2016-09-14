@@ -12,14 +12,14 @@ Provides a simple and useful way to encapsulate the Vertx EvenBus.
 ```
 
 ## How to register a service?
-The ServiceRegister class will get all methods of an interface provided by the given instance and 
-will create a Vertx EventBus Consumer for each one.
+The ServiceRegister class get all methods of an interface provided by the given instance and will create a Vertx EventBus Consumer for each method.
 
 ```java
 new ServiceRegister(vertx).registry(new ServiceImplementationInstance());
 ```
 
 ## Consuming a service
+The ProxyServiceCreator create an instance of given Service that will call the Vertx EventBus using the "send" method and will return a Future<T> with the handler result.
 
 ```java
 ServiceInterface service = new ProxyServiceCreator(vertx).create(ServiceInterface.class);

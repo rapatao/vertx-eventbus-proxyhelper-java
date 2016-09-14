@@ -4,11 +4,25 @@ Provides a simple and useful way to encapsulate the Vertx EvenBus.
 
 ## Setup
 
+Add the dependency to your project and use the provided methods to register and consume the service.
 ```xml
-<groupId>com.rapatao</groupId>
-<artifactId>vertx-eventbus-proxyhelper-java</artifactId>
-<version>0.0.1-SNAPSHOT</version>
-<packaging>jar</packaging>
+<dependency>
+    <groupId>com.rapatao</groupId>
+    <artifactId>vertx-eventbus-proxyhelper-java</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+</dependency>
+```
+
+The following repository allows you to access the dependency in OSSRH directly, just add the configuration in your "pom.xml" to get the wanted version.
+```xml
+<repositories>
+    <repository>
+        <id>sonatype-public-repository</id>
+        <name>oss.sonatype.org public repository</name>
+        <url>https://oss.sonatype.org/content/groups/public/</url>
+    </repository>
+</repositories>
 ```
 
 ## How to register a service?

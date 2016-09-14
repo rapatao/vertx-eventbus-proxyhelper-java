@@ -24,7 +24,7 @@ public class ServiceRegisterConsumerTest {
     @Before
     public void setUp(TestContext context) {
         vertx = Vertx.vertx();
-        new ServiceRegister(vertx).registry(new ValidTestServiceImpl());
+        ServiceRegister.of(vertx).to(new ValidTestServiceImpl()).register();
     }
 
     @After
@@ -36,7 +36,7 @@ public class ServiceRegisterConsumerTest {
     public void shouldConsumeAndReturnExpectedValue(TestContext context) throws InterruptedException {
         final Async async = context.async();
 
-        TestService testService = new ProxyServiceCreator(vertx).create(TestService.class);
+        final TestService testService = ProxyServiceCreator.of(vertx).create(TestService.class);
 
         Future<String> stringFuture = testService.stringMethod("test 1");
         stringFuture.setHandler(handler -> {
@@ -48,8 +48,7 @@ public class ServiceRegisterConsumerTest {
     @Test
     public void shouldReturnFailWithCustomHandler(TestContext context) {
         final Async async = context.async();
-
-        TestService testService = new ProxyServiceCreator(vertx).create(TestService.class);
+        final TestService testService = ProxyServiceCreator.of(vertx).withPrefix("").create(TestService.class);
 
         Future<String> stringFuture = testService.throwMethodWithCustomFailMessageHandler("test");
         stringFuture.setHandler(handler -> {
@@ -64,7 +63,7 @@ public class ServiceRegisterConsumerTest {
     public void shouldReturnFailWithoutCustomHandler(TestContext context) {
         final Async async = context.async();
 
-        TestService testService = new ProxyServiceCreator(vertx).create(TestService.class);
+        final TestService testService = ProxyServiceCreator.of(vertx).create(TestService.class);
 
         Future<String> stringFuture = testService.throwMethodWithoutCustomFailMessageHandler("test");
         stringFuture.setHandler(handler -> {

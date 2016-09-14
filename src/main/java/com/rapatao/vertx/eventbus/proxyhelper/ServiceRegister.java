@@ -8,33 +8,47 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.Json;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by rapatao on 13/09/16
  */
-@AllArgsConstructor
-public final class ServiceRegister {
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ServiceRegister {
 
     private final static Logger logger = LoggerFactory.getLogger(ServiceRegister.class);
 
     private final Vertx vertx;
+    private final List<Object> services = new ArrayList<>();
+    private String prefix = "";
 
-    private <T> Class<?> getInterfaceClass(T instance) {
-        final Class<?>[] interfaces = instance.getClass().getInterfaces();
-        if (interfaces == null) {
-            throw new RuntimeException("Class must have an interface");
-        }
-        if (interfaces.length > 1) {
-            throw new RuntimeException("The class must have only one interface");
-        }
-        return interfaces[0];
+    public static ServiceRegister of(final Vertx vertx) {
+        return new ServiceRegister(vertx);
     }
 
-    public <T> void registry(final String prefix, final T instance) {
+    public ServiceRegister withPrefix(final String prefix) {
+        this.prefix = prefix;
+        return this;
+    }
+
+    public <T> ServiceRegister to(T instance) {
+        services.add(instance);
+        return this;
+    }
+
+    public void register() {
+        for (Object instance : services) {
+            registry(instance);
+        }
+    }
+
+    private void registry(final Object instance) {
         final Class<?> anInterface = getInterfaceClass(instance);
 
         for (Method method : anInterface.getMethods()) {
@@ -61,9 +75,18 @@ public final class ServiceRegister {
         }
     }
 
-    public <T> void registry(final T instance) {
-        registry("", instance);
+
+    private <T> Class<?> getInterfaceClass(T instance) {
+        final Class<?>[] interfaces = instance.getClass().getInterfaces();
+        if (interfaces == null) {
+            throw new RuntimeException("Class must have an interface");
+        }
+        if (interfaces.length > 1) {
+            throw new RuntimeException("The class must have only one interface");
+        }
+        return interfaces[0];
     }
+
 
     private <T> void handleFail(Method method, T instance, Message<String> handler, Future<Object> future) {
         final CustomMessageFailHandler customMessageFailHandler = getCustomMessageFailHandler(method, instance);

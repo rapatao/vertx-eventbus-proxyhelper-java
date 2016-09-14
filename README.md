@@ -25,25 +25,44 @@ The following repository allows you to access the dependency in OSSRH directly, 
 </repositories>
 ```
 
-## How to register a service?
-The ServiceRegister class get all methods of an interface provided by the given instance and will create a Vertx EventBus Consumer for each method.
-
+## How to create and use a service?
+The ProxyServiceCreator create an instance of given Service that will call the Vertx EventBus using the "send" method and will return a Future<T> with the handler result.
 ```java
-new ServiceRegister(vertx).registry(new ServiceImplementationInstance());
+interface Service {
+    Future<String> someMethod(String argument);
+}
 ```
 
-## Consuming a service
-The ProxyServiceCreator create an instance of given Service that will call the Vertx EventBus using the "send" method and will return a Future<T> with the handler result.
-
 ```java
-ServiceInterface service = new ProxyServiceCreator(vertx).create(ServiceInterface.class);
-...
+final Service service = ProxyServiceCreator.of(vertx).create(Service.class);
+
 Future<String> stringFuture = service.someMethod("test");
 stringFuture.setHandler(handler -> {
     context.assertEquals("future complete: test 1", handler.result());
     async.complete();
 });
 ```
+
+## How to register a service?
+The ServiceRegister class get all methods of an interface provided by the given instance and will create a Vertx EventBus Consumer for each method.
+
+```java
+public class ServiceImpl implements Service {
+    @Override
+    public Future<String> someMethod(String argument) {
+        Future<String> future = Future.future();
+        future.complete("future complete: test 1");
+        return future;
+    }
+}
+```
+
+```java
+ServiceRegister.of(vertx).withPrefix("").to(new ServiceImpl()).register();
+
+```
+
+
 
 ## Limitations
 

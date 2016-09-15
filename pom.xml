@@ -30,7 +30,7 @@
 
     <scm>
         <connection>scm:git:git://github.com/rapatao/vertx-eventbus-proxyhelper-java.git</connection>
-        <developerConnection>scm:git:ssh://github.com:rapatao/vertx-eventbus-proxyhelper-java.git</developerConnection>
+        <developerConnection>scm:git:ssh://github.com/rapatao/vertx-eventbus-proxyhelper-java.git</developerConnection>
         <url>http://github.com/rapatao/vertx-eventbus-proxyhelper-java</url>
     </scm>
 

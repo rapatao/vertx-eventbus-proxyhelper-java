@@ -139,6 +139,10 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
                 </configuration>
             </plugin>
             <plugin>

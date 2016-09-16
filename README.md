@@ -9,7 +9,7 @@ Add the dependency to your project and use the provided methods to register and 
 <dependency>
     <groupId>com.rapatao</groupId>
     <artifactId>vertx-eventbus-proxyhelper-java</artifactId>
-    <version>0.0.1-RELEASE</version>
+    <version>0.0.2-RELEASE</version>
 </dependency>
 ```
 

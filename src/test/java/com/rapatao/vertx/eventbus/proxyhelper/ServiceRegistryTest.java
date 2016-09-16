@@ -10,11 +10,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+interface Service {
+    Future<String> someMethod(String argument);
+}
+
 /**
  * Created by rapatao on 13/09/16.
  */
 @RunWith(VertxUnitRunner.class)
-public class ServiceRegisterTest {
+public class ServiceRegistryTest {
 
     private Vertx vertx;
 
@@ -30,13 +34,9 @@ public class ServiceRegisterTest {
 
     @Test(expected = RuntimeException.class)
     public void shouldFailToRegistryServiceWithMultiplesInterfaces(TestContext context) {
-        ServiceRegister.of(vertx).withPrefix("").to(new InvalidTestServiceImpl()).register();
+        ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new InvalidTestServiceImpl()).registry();
     }
 
-}
-
-interface Service {
-    Future<String> someMethod(String argument);
 }
 
 class ServiceImpl implements Service {

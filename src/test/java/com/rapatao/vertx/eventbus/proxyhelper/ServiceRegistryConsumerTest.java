@@ -17,14 +17,14 @@ import org.junit.runner.RunWith;
  * Created by rapatao on 13/09/16.
  */
 @RunWith(VertxUnitRunner.class)
-public class ServiceRegisterConsumerTest {
+public class ServiceRegistryConsumerTest {
 
     private Vertx vertx;
 
     @Before
     public void setUp(TestContext context) {
         vertx = Vertx.vertx();
-        ServiceRegister.of(vertx).to(new ValidTestServiceImpl()).register();
+        ServiceRegistry.toEventBus(vertx.eventBus()).to(new ValidTestServiceImpl()).registry();
     }
 
     @After
@@ -36,7 +36,7 @@ public class ServiceRegisterConsumerTest {
     public void shouldConsumeAndReturnExpectedValue(TestContext context) throws InterruptedException {
         final Async async = context.async();
 
-        final TestService testService = ProxyServiceCreator.of(vertx).create(TestService.class);
+        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
 
         Future<String> stringFuture = testService.stringMethod("test 1");
         stringFuture.setHandler(handler -> {
@@ -48,7 +48,7 @@ public class ServiceRegisterConsumerTest {
     @Test
     public void shouldReturnFailWithCustomHandler(TestContext context) {
         final Async async = context.async();
-        final TestService testService = ProxyServiceCreator.of(vertx).withPrefix("").create(TestService.class);
+        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).withPrefix("").asSend(TestService.class);
 
         Future<String> stringFuture = testService.throwMethodWithCustomFailMessageHandler("test");
         stringFuture.setHandler(handler -> {
@@ -63,7 +63,7 @@ public class ServiceRegisterConsumerTest {
     public void shouldReturnFailWithoutCustomHandler(TestContext context) {
         final Async async = context.async();
 
-        final TestService testService = ProxyServiceCreator.of(vertx).create(TestService.class);
+        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
 
         Future<String> stringFuture = testService.throwMethodWithoutCustomFailMessageHandler("test");
         stringFuture.setHandler(handler -> {

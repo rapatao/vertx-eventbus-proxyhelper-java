@@ -33,7 +33,7 @@ interface Service {
 ```
 
 ```java
-final Service service = ProxyServiceCreator.of(vertx).create(Service.class);
+final Service service = ProxyCreator.toEventBus(vertx.eventBus()).asSend(Service.class);
 
 Future<String> stringFuture = service.someMethod("test");
 stringFuture.setHandler(handler -> {
@@ -57,7 +57,7 @@ public class ServiceImpl implements Service {
 ```
 
 ```java
-ServiceRegister.of(vertx).withPrefix("").to(new ServiceImpl()).register();
+ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new ServiceImpl()).registry();
 
 ```
 

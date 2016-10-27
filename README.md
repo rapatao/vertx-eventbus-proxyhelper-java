@@ -9,7 +9,7 @@ Add the dependency to your project and use the provided methods to register and 
 <dependency>
     <groupId>com.rapatao</groupId>
     <artifactId>vertx-eventbus-proxyhelper-java</artifactId>
-    <version>0.0.2-RELEASE</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 
@@ -35,7 +35,7 @@ interface Service {
 ```java
 final Service service = ProxyCreator.toEventBus(vertx.eventBus()).asSend(Service.class);
 
-Future<String> stringFuture = service.someMethod("test");
+final Future<String> stringFuture = service.someMethod("test");
 stringFuture.setHandler(handler -> {
     context.assertEquals("future complete: test 1", handler.result());
     async.complete();
@@ -49,7 +49,7 @@ The ServiceRegister class get all methods of an interface provided by the given 
 public class ServiceImpl implements Service {
     @Override
     public Future<String> someMethod(String argument) {
-        Future<String> future = Future.future();
+        final Future<String> future = Future.future();
         future.complete("future complete: test 1");
         return future;
     }
@@ -58,13 +58,11 @@ public class ServiceImpl implements Service {
 
 ```java
 ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new ServiceImpl()).registry();
-
 ```
-
-
 
 ## Limitations
 
-- All methods must return a Future<T>.
 - The service implementation must have only one interface
-- The service methods must have only one argument (to be improved).
+- All methods must return a Future<T>.
+- You cannot override any service methods.
+- All methods arguments must be decoded with io.vertx.core.json.Json#decode

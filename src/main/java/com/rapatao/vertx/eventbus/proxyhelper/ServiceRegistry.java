@@ -20,72 +20,72 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class ServiceRegistry {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
+  private final static Logger logger = LoggerFactory.getLogger(ServiceRegistry.class);
 
-    private final EventBus eventBus;
-    private final List<Object> services = new ArrayList<>();
-    private String prefix = "";
+  private final EventBus eventBus;
+  private final List<Object> services = new ArrayList<>();
+  private String prefix = "";
 
-    /**
-     * Create a ServiceRegistry using an {@link EventBus}.
-     *
-     * @param eventBus the Vertx EventBus.
-     * @return the ServiceRegistry instance.
-     */
-    public static ServiceRegistry toEventBus(final EventBus eventBus) {
-        return new ServiceRegistry(eventBus);
+  /**
+   * Create a ServiceRegistry using an {@link EventBus}.
+   *
+   * @param eventBus the Vertx EventBus.
+   * @return the ServiceRegistry instance.
+   */
+  public static ServiceRegistry toEventBus(final EventBus eventBus) {
+    return new ServiceRegistry(eventBus);
+  }
+
+  /**
+   * Defines the prefix to use when registry the consumers.
+   *
+   * @param prefix the prefix to be used in service address. Default is an empty string.
+   * @return the ServiceRegistry instance.
+   */
+  public ServiceRegistry withPrefix(final String prefix) {
+    this.prefix = prefix;
+    return this;
+  }
+
+  /**
+   * Add an Service implementation to be registered in the Vertx EventBus.
+   *
+   * @param instance the service implementation instance.
+   * @param <T>      the service type.
+   * @return the ServiceRegistry instance.
+   */
+  public <T> ServiceRegistry to(T instance) {
+    services.add(instance);
+    return this;
+  }
+
+  /**
+   * Registry all services in the Vertx EventBus.
+   */
+  public void registry() {
+    services.forEach(this::registry);
+  }
+
+  private void registry(final Object instance) {
+    final Class<?> anInterface = getInterfaceClass(instance);
+    for (Method method : anInterface.getMethods()) {
+      final String address = (prefix.isEmpty() ? anInterface.getName() : prefix) + "#" + method.getName();
+      logger.info("Registering consumer for " + address);
+      EventBusConsumerHandler eventBusConsumerHandler = new EventBusConsumerHandler(method, instance);
+      eventBus.consumer(address, eventBusConsumerHandler::handle);
     }
+  }
 
-    /**
-     * Defines the prefix to use when registry the consumers.
-     *
-     * @param prefix the prefix to be used in service address. Default is an empty string.
-     * @return the ServiceRegistry instance.
-     */
-    public ServiceRegistry withPrefix(final String prefix) {
-        this.prefix = prefix;
-        return this;
+  private <T> Class<?> getInterfaceClass(T instance) {
+    final Class<?>[] interfaces = instance.getClass().getInterfaces();
+    if (interfaces == null) {
+      throw new RuntimeException("Class must have an interface");
     }
-
-    /**
-     * Add an Service implementation to be registered in the Vertx EventBus.
-     *
-     * @param instance the service implementation instance.
-     * @param <T>      the service type.
-     * @return the ServiceRegistry instance.
-     */
-    public <T> ServiceRegistry to(T instance) {
-        services.add(instance);
-        return this;
+    if (interfaces.length > 1) {
+      throw new RuntimeException("The class must have only one interface");
     }
-
-    /**
-     * Registry all services in the Vertx EventBus.
-     */
-    public void registry() {
-        services.forEach(this::registry);
-    }
-
-    private void registry(final Object instance) {
-        final Class<?> anInterface = getInterfaceClass(instance);
-        for (Method method : anInterface.getMethods()) {
-            final String address = prefix + "#" + anInterface.getName() + "#" + method.getName();
-            logger.info("Registering consumer for " + address);
-            EventBusConsumerHandler eventBusConsumerHandler = new EventBusConsumerHandler(method, instance);
-            eventBus.consumer(address, eventBusConsumerHandler::handle);
-        }
-    }
-
-    private <T> Class<?> getInterfaceClass(T instance) {
-        final Class<?>[] interfaces = instance.getClass().getInterfaces();
-        if (interfaces == null) {
-            throw new RuntimeException("Class must have an interface");
-        }
-        if (interfaces.length > 1) {
-            throw new RuntimeException("The class must have only one interface");
-        }
-        return interfaces[0];
-    }
+    return interfaces[0];
+  }
 
 
 }

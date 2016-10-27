@@ -1,5 +1,6 @@
 package com.rapatao.vertx.eventbus.proxyhelper;
 
+import com.rapatao.vertx.eventbus.proxyhelper.helper.CustomException;
 import com.rapatao.vertx.eventbus.proxyhelper.helper.TestService;
 import com.rapatao.vertx.eventbus.proxyhelper.helper.ValidTestServiceImpl;
 import io.vertx.core.Future;
@@ -19,59 +20,79 @@ import org.junit.runner.RunWith;
 @RunWith(VertxUnitRunner.class)
 public class ServiceRegistryConsumerTest {
 
-    private Vertx vertx;
+  private Vertx vertx;
 
-    @Before
-    public void setUp(TestContext context) {
-        vertx = Vertx.vertx();
-        ServiceRegistry.toEventBus(vertx.eventBus()).to(new ValidTestServiceImpl()).registry();
-    }
+  @Before
+  public void setUp(TestContext context) {
+    vertx = Vertx.vertx();
+    ServiceRegistry.toEventBus(vertx.eventBus()).to(new ValidTestServiceImpl()).registry();
+  }
 
-    @After
-    public void tearDown(TestContext context) {
-        vertx.close();
-    }
+  @After
+  public void tearDown(TestContext context) {
+    vertx.close();
+  }
 
-    @Test
-    public void shouldConsumeAndReturnExpectedValue(TestContext context) throws InterruptedException {
-        final Async async = context.async();
+  @Test
+  public void shouldConsumeAndReturnExpectedValue(TestContext context) throws InterruptedException {
+    final Async async = context.async();
 
-        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
+    final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
 
-        Future<String> stringFuture = testService.stringMethod("test 1");
-        stringFuture.setHandler(handler -> {
-            context.assertEquals("future complete: test 1", handler.result());
-            async.complete();
-        });
-    }
+    Future<String> stringFuture = testService.stringMethod("test 1");
+    stringFuture.setHandler(handler -> {
+      context.assertEquals("future complete: test 1", handler.result());
+      async.complete();
+    });
+  }
 
-    @Test
-    public void shouldReturnFailWithCustomHandler(TestContext context) {
-        final Async async = context.async();
-        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).withPrefix("").asSend(TestService.class);
+  @Test
+  public void shouldReturnFailWithoutCustomHandler(TestContext context) {
+    final Async async = context.async();
 
-        Future<String> stringFuture = testService.throwMethodWithCustomFailMessageHandler("test");
-        stringFuture.setHandler(handler -> {
-            Assert.assertTrue(handler.failed());
-            Assert.assertNotNull(handler.cause());
-            Assert.assertEquals("test - custom handler", handler.cause().getMessage());
-            async.complete();
-        });
-    }
+    final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
 
-    @Test
-    public void shouldReturnFailWithoutCustomHandler(TestContext context) {
-        final Async async = context.async();
+    Future<String> stringFuture = testService.throwMethodWithoutCustomFailMessageHandler("test");
+    stringFuture.setHandler(handler -> {
+      Assert.assertTrue(handler.failed());
+      Assert.assertNotNull(handler.cause());
+      Assert.assertEquals("test", handler.cause().getMessage());
+      async.complete();
+    });
+  }
 
-        final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
+  @Test
+  public void shouldCallMethodWithNoArgument(TestContext context) {
+    final Async async = context.async();
+    final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
+    final Future<String> future = testService.stringMethodWithoutArgument();
+    future.setHandler(handler -> {
+      Assert.assertEquals("ok", handler.result());
+      async.complete();
+    });
+  }
 
-        Future<String> stringFuture = testService.throwMethodWithoutCustomFailMessageHandler("test");
-        stringFuture.setHandler(handler -> {
-            Assert.assertTrue(handler.failed());
-            Assert.assertNotNull(handler.cause());
-            Assert.assertEquals("test", handler.cause().getMessage());
-            async.complete();
-        });
-    }
+  @Test
+  public void shouldCallMethodWithMultipleArguments(TestContext context) {
+    final Async async = context.async();
+    final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
+    final Future<String> future = testService.stringMethodWithMultipleArguments("v1", "v2", 123);
+    future.setHandler(handler -> {
+      Assert.assertEquals("v1-v2-123", handler.result());
+      async.complete();
+    });
+  }
+
+  @Test
+  public void shouldReturnCustomException(TestContext context) {
+    final Async async = context.async();
+    final TestService testService = ProxyCreator.toEventBus(vertx.eventBus()).asSend(TestService.class);
+    final Future<String> future = testService.shouldReturnCustomException();
+    future.setHandler(handler -> {
+      Assert.assertTrue(handler.failed());
+      Assert.assertEquals(CustomException.VALUE, handler.cause().getMessage());
+      async.complete();
+    });
+  }
 
 }

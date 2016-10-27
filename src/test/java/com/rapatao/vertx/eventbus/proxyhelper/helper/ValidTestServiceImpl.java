@@ -1,7 +1,5 @@
 package com.rapatao.vertx.eventbus.proxyhelper.helper;
 
-import com.rapatao.vertx.eventbus.proxyhelper.TestCustomMessageFailHandler;
-import com.rapatao.vertx.eventbus.proxyhelper.handler.MessageFailHandler;
 import io.vertx.core.Future;
 
 /**
@@ -9,28 +7,35 @@ import io.vertx.core.Future;
  */
 public class ValidTestServiceImpl implements TestService {
 
-    @Override
-    public Future<String> stringMethod(String value) {
-        Future<String> future = Future.future();
+  @Override
+  public Future<String> stringMethod(String value) {
+    Future<String> future = Future.future();
 
-        future.complete("future complete: " + value);
+    future.complete("future complete: " + value);
 
-        return future;
-    }
+    return future;
+  }
 
-    @Override
-    @MessageFailHandler(TestCustomMessageFailHandler.class)
-    public Future<String> throwMethodWithCustomFailMessageHandler(String value) {
-        Future<String> future = Future.future();
-        future.fail(new RuntimeException(value));
-        return future;
-    }
+  @Override
+  public Future<String> throwMethodWithoutCustomFailMessageHandler(String value) {
+    Future<String> future = Future.future();
+    future.fail(new RuntimeException(value));
+    return future;
+  }
 
-    @Override
-    public Future<String> throwMethodWithoutCustomFailMessageHandler(String value) {
-        Future<String> future = Future.future();
-        future.fail(new RuntimeException(value));
-        return future;
-    }
+  @Override
+  public Future<String> stringMethodWithoutArgument() {
+    return Future.succeededFuture("ok");
+  }
+
+  @Override
+  public Future<String> stringMethodWithMultipleArguments(String value1, String value2, Integer value3) {
+    return Future.succeededFuture(value1 + "-" + value2 + "-" + value3);
+  }
+
+  @Override
+  public Future<String> shouldReturnCustomException() {
+    return Future.failedFuture(new CustomException());
+  }
 
 }

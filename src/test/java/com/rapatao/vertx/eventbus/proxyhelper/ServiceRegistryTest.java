@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 interface Service {
-    Future<String> someMethod(String argument);
+  Future<String> someMethod(String argument);
 }
 
 /**
@@ -20,30 +20,21 @@ interface Service {
 @RunWith(VertxUnitRunner.class)
 public class ServiceRegistryTest {
 
-    private Vertx vertx;
+  private Vertx vertx;
 
-    @Before
-    public void setUp(TestContext context) {
-        vertx = Vertx.vertx();
-    }
+  @Before
+  public void setUp(TestContext context) {
+    vertx = Vertx.vertx();
+  }
 
-    @After
-    public void tearDown(TestContext context) {
-        vertx.close();
-    }
+  @After
+  public void tearDown(TestContext context) {
+    vertx.close();
+  }
 
-    @Test(expected = RuntimeException.class)
-    public void shouldFailToRegistryServiceWithMultiplesInterfaces(TestContext context) {
-        ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new InvalidTestServiceImpl()).registry();
-    }
+  @Test(expected = RuntimeException.class)
+  public void shouldFailToRegistryServiceWithMultiplesInterfaces(TestContext context) {
+    ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new InvalidTestServiceImpl()).registry();
+  }
 
-}
-
-class ServiceImpl implements Service {
-    @Override
-    public Future<String> someMethod(String argument) {
-        Future<String> future = Future.future();
-        future.complete("future complete: test 1");
-        return future;
-    }
 }

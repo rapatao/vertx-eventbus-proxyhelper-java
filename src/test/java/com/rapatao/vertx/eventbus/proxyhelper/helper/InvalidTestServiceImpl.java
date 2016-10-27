@@ -9,18 +9,28 @@ import java.io.Serializable;
  */
 public class InvalidTestServiceImpl implements TestService, Serializable {
 
-    @Override
-    public Future<String> stringMethod(String value) {
-        return null;
-    }
+  @Override
+  public Future<String> stringMethod(String value) {
+    return null;
+  }
 
-    @Override
-    public Future<String> throwMethodWithCustomFailMessageHandler(String value) {
-        return null;
-    }
+  @Override
+  public Future<String> throwMethodWithoutCustomFailMessageHandler(String value) {
+    return null;
+  }
 
-    @Override
-    public Future<String> throwMethodWithoutCustomFailMessageHandler(String value) {
-        return null;
-    }
+  @Override
+  public Future<String> stringMethodWithoutArgument() {
+    return null;
+  }
+
+  @Override
+  public Future<String> stringMethodWithMultipleArguments(String value1, String value2, Integer value3) {
+    return null;
+  }
+
+  @Override
+  public Future<String> shouldReturnCustomException() {
+    return null;
+  }
 }

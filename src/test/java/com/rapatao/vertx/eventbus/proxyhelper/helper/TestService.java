@@ -1,7 +1,5 @@
 package com.rapatao.vertx.eventbus.proxyhelper.helper;
 
-import com.rapatao.vertx.eventbus.proxyhelper.TestCustomMessageFailHandler;
-import com.rapatao.vertx.eventbus.proxyhelper.handler.MessageFailHandler;
 import io.vertx.core.Future;
 
 /**
@@ -9,11 +7,15 @@ import io.vertx.core.Future;
  */
 public interface TestService {
 
-    Future<String> stringMethod(String value);
+  Future<String> stringMethod(String value);
 
-    Future<String> throwMethodWithCustomFailMessageHandler(String value);
+  Future<String> throwMethodWithoutCustomFailMessageHandler(String value);
 
-    Future<String> throwMethodWithoutCustomFailMessageHandler(String value);
+  Future<String> stringMethodWithoutArgument();
+
+  Future<String> stringMethodWithMultipleArguments(String value1, String value2, Integer value3);
+
+  Future<String> shouldReturnCustomException();
 
 }
 

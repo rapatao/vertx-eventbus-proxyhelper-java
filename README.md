@@ -1,6 +1,5 @@
 # Vertx EventBus Proxy Helper for Java
-
-[![Build Status](https://travis-ci.org/rapatao/vertx-eventbus-proxyhelper-java.svg?branch=master)](https://travis-ci.org/rapatao/vertx-eventbus-proxyhelper-java) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b86ce732e6e741b1b7e8dafb9deb3bbb)](https://www.codacy.com/app/rapatao/vertx-eventbus-proxyhelper-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rapatao/vertx-eventbus-proxyhelper-java&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://travis-ci.org/rapatao/vertx-eventbus-proxyhelper-java.svg)](https://travis-ci.org/rapatao/vertx-eventbus-proxyhelper-java) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/b86ce732e6e741b1b7e8dafb9deb3bbb)](https://www.codacy.com/app/rapatao/vertx-eventbus-proxyhelper-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rapatao/vertx-eventbus-proxyhelper-java&amp;utm_campaign=Badge_Grade)
 
 Provides a simple and useful way to encapsulate the Vertx EvenBus.
 

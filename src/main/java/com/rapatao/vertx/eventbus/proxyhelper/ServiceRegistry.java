@@ -1,5 +1,7 @@
 package com.rapatao.vertx.eventbus.proxyhelper;
 
+import com.rapatao.vertx.eventbus.proxyhelper.exception.InterfaceNotFoundException;
+import com.rapatao.vertx.eventbus.proxyhelper.exception.MultipleInterfacesForServiceException;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -79,13 +81,12 @@ public class ServiceRegistry {
   private <T> Class<?> getInterfaceClass(T instance) {
     final Class<?>[] interfaces = instance.getClass().getInterfaces();
     if (interfaces == null) {
-      throw new RuntimeException("Class must have an interface");
+      throw new InterfaceNotFoundException();
     }
     if (interfaces.length > 1) {
-      throw new RuntimeException("The class must have only one interface");
+      throw new MultipleInterfacesForServiceException();
     }
     return interfaces[0];
   }
-
 
 }

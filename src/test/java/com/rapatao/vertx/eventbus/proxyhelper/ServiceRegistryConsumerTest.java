@@ -41,7 +41,7 @@ public class ServiceRegistryConsumerTest {
 
     Future<String> stringFuture = testService.stringMethod("test 1");
     stringFuture.setHandler(handler -> {
-      context.assertEquals("future complete: test 1", handler.result());
+      Assert.assertEquals("future complete: test 1", handler.result());
       async.complete();
     });
   }

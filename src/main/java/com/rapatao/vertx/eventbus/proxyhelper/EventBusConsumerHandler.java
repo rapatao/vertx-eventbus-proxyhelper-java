@@ -28,7 +28,7 @@ class EventBusConsumerHandler {
     this.instance = instance;
   }
 
-  void handle(Message<String> handler) {
+  public void handle(Message<String> handler) {
     try {
       final JsonArray arguments = new JsonArray(handler.body());
       final List<Object> parameters = new ArrayList<>();

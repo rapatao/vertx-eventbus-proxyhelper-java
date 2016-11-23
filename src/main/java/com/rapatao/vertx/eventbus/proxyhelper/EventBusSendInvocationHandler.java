@@ -1,5 +1,6 @@
 package com.rapatao.vertx.eventbus.proxyhelper;
 
+import com.rapatao.vertx.eventbus.proxyhelper.exception.ProxyHelperException;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.Json;
@@ -36,7 +37,8 @@ class EventBusSendInvocationHandler implements InvocationHandler {
       if (handler.succeeded()) {
         future.complete(Json.decodeValue(handler.result().body(), ((Class) returnType)));
       } else {
-        future.fail(Json.decodeValue(handler.cause().getMessage(), Exception.class));
+        final JsonArray exception = new JsonArray(handler.cause().getMessage());
+        future.fail(new ProxyHelperException(exception.getString(0), Json.decodeValue(exception.getString(1), StackTraceElement[].class)));
       }
     });
     return future;

@@ -22,7 +22,9 @@ class EventBusPublishInvocationHandler implements InvocationHandler {
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     final String address = (prefix.isEmpty() ? method.getDeclaringClass().getName() : prefix) + "#" + method.getName();
     final JsonArray arguments = new JsonArray();
-    Arrays.stream(args).forEach(a -> arguments.add(Json.encode(a)));
+    if (args != null) {
+      Arrays.stream(args).forEach(a -> arguments.add(Json.encode(a)));
+    }
     eventBus.publish(address, arguments.toString());
     return null;
   }

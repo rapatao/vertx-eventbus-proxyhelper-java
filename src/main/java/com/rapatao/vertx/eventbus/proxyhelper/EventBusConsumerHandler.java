@@ -10,6 +10,7 @@ import io.vertx.core.logging.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by rapatao on 15/09/16.
@@ -28,7 +29,7 @@ class EventBusConsumerHandler {
     this.instance = instance;
   }
 
-  public void handle(Message<String> handler) {
+  void handle(Message<String> handler) {
     try {
       final JsonArray arguments = new JsonArray(handler.body());
       final List<Object> parameters = new ArrayList<>();
@@ -50,7 +51,10 @@ class EventBusConsumerHandler {
   }
 
   private void handleFail(final Message<String> handler, final Future<Object> future) {
-    handler.fail(-1, Json.encode(future.cause()));
+    final JsonArray exception = new JsonArray()
+        .add(Optional.ofNullable(future.cause().getMessage()).orElse(""))
+        .add(Json.encode(future.cause().getStackTrace()));
+    handler.fail(-1, exception.toString());
   }
 
 }

@@ -10,7 +10,7 @@ Add the dependency to your project and use the provided methods to register and 
 <dependency>
     <groupId>com.rapatao</groupId>
     <artifactId>vertx-eventbus-proxyhelper-java</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -64,6 +64,8 @@ ServiceRegistry.toEventBus(vertx.eventBus()).withPrefix("").to(new ServiceImpl()
 ## Limitations
 
 - The service implementation must have only one interface
-- All methods must return a Future<T>.
 - You cannot override any service methods.
 - All methods arguments must be decoded with io.vertx.core.json.Json#decode
+- When using:
+    - "asSend": The service method does need to return a "Future<T>".
+    - "AsPublish": The service method does not need to have a return statement.

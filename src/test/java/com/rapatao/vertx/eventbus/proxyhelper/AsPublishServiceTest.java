@@ -5,6 +5,7 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,8 @@ public class AsPublishServiceTest {
     ServiceRegistry.toEventBus(vertx.eventBus()).to(new ServiceImpl()).registry();
     final Service service = ProxyCreator.toEventBus(vertx.eventBus()).asPublish(Service.class);
 
+    Assert.assertNotNull(service);
+
     testContext = context;
     noArgAsync = context.async();
     oneArgAsync = context.async();
@@ -44,6 +47,7 @@ public class AsPublishServiceTest {
     service.noArgs();
     service.oneArg("123");
     service.twoArgs("123", 321L);
+
   }
 
 
@@ -64,13 +68,13 @@ public class AsPublishServiceTest {
 
     @Override
     public void oneArg(String arg) {
-      testContext.assertTrue(arg.equals("123"));
+      testContext.assertTrue("123".equals(arg));
       oneArgAsync.complete();
     }
 
     @Override
     public void twoArgs(String arg1, Long arg2) {
-      testContext.assertTrue(arg1.equals("123") && arg2.equals(321L));
+      testContext.assertTrue("123".equals(arg1) && arg2.equals(321L));
       twoArgsAsync.complete();
     }
 

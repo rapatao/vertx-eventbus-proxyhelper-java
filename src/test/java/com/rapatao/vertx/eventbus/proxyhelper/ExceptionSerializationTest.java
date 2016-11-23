@@ -9,6 +9,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import lombok.Getter;
 import lombok.Setter;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,7 @@ public class ExceptionSerializationTest {
     final Async async = context.async();
     ServiceRegistry.toEventBus(vertx.eventBus()).to(new ServiceImpl()).registry();
     final Service service = ProxyCreator.toEventBus(vertx.eventBus()).asSend(Service.class);
+    Assert.assertNotNull(service);
     service.failWithThrow().setHandler(handler -> {
           try {
             context.assertFalse(handler.succeeded());
@@ -57,6 +59,7 @@ public class ExceptionSerializationTest {
     final Async async = context.async();
     ServiceRegistry.toEventBus(vertx.eventBus()).to(new ServiceImpl()).registry();
     final Service service = ProxyCreator.toEventBus(vertx.eventBus()).asSend(Service.class);
+    Assert.assertNotNull(service);
     service.failFuture().setHandler(handler -> {
           try {
             context.assertFalse(handler.succeeded());
@@ -92,7 +95,7 @@ public class ExceptionSerializationTest {
 
   public static class ServiceImpl implements Service {
 
-    final TestException testException = new TestException(new String[]{"1", "2"});
+    private final TestException testException = new TestException(new String[]{"1", "2"});
 
     @Override
     public Future<String> failWithThrow() {
